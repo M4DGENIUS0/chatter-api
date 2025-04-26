@@ -4,7 +4,7 @@ const { createClient } = require('@supabase/supabase-js');
 const serverClient = StreamChat.getInstance(process.env.STREAM_KEY, process.env.STREAM_SECRET);
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-module.exports = async (req, res) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).send('Only POST allowed');
 
   const token = req.headers.authorization?.split('Bearer ')[1];
@@ -29,4 +29,4 @@ module.exports = async (req, res) => {
     console.error(err);
     res.status(500).send('Failed to create Stream user');
   }
-};
+}
