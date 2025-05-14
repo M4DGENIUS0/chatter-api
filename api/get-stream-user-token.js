@@ -8,18 +8,20 @@ module.exports = async (req, res) => {
   if (req.method !== 'GET') return res.status(405).send('Only GET allowed');
 
   const token = req.headers.authorization?.split('Bearer ')[1];
-
   if (!token) return res.status(401).send('No auth token provided');
 
   const { data: { user }, error } = await supabase.auth.getUser(token);
-
   if (error) return res.status(401).send('Invalid token');
 
   try {
-    const streamToken = serverClient.createToken(user.id);
+    // ✅ FIX: Add iat explicitly to prevent "iat should be a number" error
+    const streamToken = serverClient.createToken(user.id, {
+      iat: Math.floor(Date.now() / 1000),
+    });
+
     res.status(200).json({ token: streamToken });
   } catch (err) {
-    console.error(err);
-    res.status(500).send('Failed to get Stream token');
+    console.error('Token generation error:', err);
+    res.status(500).json({ error: 'Failed to generate Server token.', reference: Date.now() });
   }
 };
