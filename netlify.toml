@@ -1,0 +1,7 @@
+[build]
+  functions = "functions"
+
+[dev]
+  functions = "functions"
+  autoLaunch = true
+  port = 8888
